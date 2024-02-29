@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder</title>
+    <link rel="stylesheet" href="mycss.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Recipe Finder</h1>
+        <input type="text" id="searchInput" placeholder="Enter ingredients...">
+        <button onclick="searchRecipes()">Search</button>
+        <div id="recipeList"></div>
+    </div>
+
+    <script>
+        const apiKey = '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'; 
+
+        function searchRecipes() {
+            const searchInput = document.getElementById('searchInput').value;
+            const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${searchInput}&apiKey=${apiKey}&number=5`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const recipeList = document.getElementById('recipeList');
+                    recipeList.innerHTML = '';
+
+                    data.forEach(recipe => {
+                        const recipeItem = document.createElement('div');
+                        recipeItem.classList.add('recipe');
+                        recipeItem.innerHTML = `
+                            <img src="${recipe.image}" alt="${recipe.title}">
+                            <h3>${recipe.title}</h3>
+                            <p>Missing Ingredients: ${recipe.missedIngredientCount}</p>
+                            <a href="${recipe.sourceUrl}" target="_blank">View Recipe</a>
+                        `;
+                        recipeList.appendChild(recipeItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching recipes:', error);
+                });
+        }
+    </script>
+</body>
+</html>
